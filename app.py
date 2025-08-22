@@ -3,6 +3,7 @@ import os
 import asyncio
 from pyzerox import zerox
 from pyzerox.core.types import ZeroxOutput
+import traceback
 
 st.title("PDF OCR + Gemini 処理アプリ")
 
@@ -39,6 +40,14 @@ os.makedirs(output_dir, exist_ok=True)
 
 if uploaded_file and st.button("実行"):
 
+    # ファイルサイズの確認
+    file_size = uploaded_file.getbuffer().nbytes
+    st.write(f"アップロードされたファイル名: {uploaded_file.name}")
+    st.write(f"ファイルサイズ: {file_size} バイト")
+    if file_size == 0:
+        st.error("アップロードされたファイルが空です。処理を中止します。")
+        st.stop()
+
     file_path = os.path.join(output_dir, uploaded_file.name)
     with open(file_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
@@ -55,15 +64,23 @@ if uploaded_file and st.button("実行"):
             return result
         except Exception as e:
             st.error(f"エラーが発生しました: {e}")
+            st.text_area("詳細エラー情報", traceback.format_exc(), height=300)
             return None
 
     with st.spinner("処理中...しばらくお待ちください"):
-        result = asyncio.run(process_file())
+        try:
+            result = asyncio.run(process_file())
+        except Exception as e:
+            st.error(f"非同期処理で例外が発生しました: {e}")
+            st.text_area("詳細エラー情報", traceback.format_exc(), height=300)
+            result = None
 
-    if result and result.pages:
+    # デバッグ用にresult全体の内容を表示（かなり長いので必要に応じてコメントアウト可）
+    st.write("zerox() の返却値 (result):")
+    st.write(result)
+
+    if result is not None and hasattr(result, "pages") and result.pages:
         st.success(f"処理完了！{len(result.pages)}ページ分の内容を表示します。")
         for i, page in enumerate(result.pages, start=1):
             st.markdown(f"### ページ {i}")
-            st.text_area(f"ページ{i}の内容", page.content, height=300)
-    else:
-        st.warning("処理結果が取得できませんでした。")
+            st.text_area(f"ページ{i}の内容", page.c_

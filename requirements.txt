@@ -1,4 +1,7 @@
 streamlit
 litellm
-aiofiles
 py-zerox
+aiofiles
+httpx
+pypdf
+pdfminer.six
