@@ -1,3 +1,9 @@
+#MyAppignore
+output_webapp/
+.env
+
+#---default---↓
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
