@@ -83,4 +83,6 @@ if uploaded_file and st.button("実行"):
         st.success(f"処理完了！{len(result.pages)}ページ分の内容を表示します。")
         for i, page in enumerate(result.pages, start=1):
             st.markdown(f"### ページ {i}")
-            st.text_area(f"ページ{i}の内容", page.c_
+            st.text_area(f"ページ{i}の内容", page.content, height=300)
+    else:
+        st.warning("処理結果が取得できませんでした。")
