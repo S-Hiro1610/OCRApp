@@ -5,4 +5,3 @@ aiofiles
 httpx
 pypdf
 pdfminer.six
-poppler
